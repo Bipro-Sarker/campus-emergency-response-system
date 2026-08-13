@@ -68,3 +68,17 @@ CREATE TABLE emergency_status_history (
     FOREIGN KEY (emergency_request_id) REFERENCES emergency_requests(id) ON DELETE CASCADE,
     FOREIGN KEY (changed_by) REFERENCES users(id)
 );
+
+-- Seed Data: Emergency Types
+INSERT INTO emergency_types (name, description) VALUES 
+('Medical', 'Health related emergencies, injuries, or sudden illness'),
+('Fire', 'Fire outbreak, smoke, or electrical hazards in buildings'),
+('Security', 'Unauthorized entry, theft, or physical threat'),
+('Harassment', 'Bullying, stalking, or any form of harassment');
+
+-- Seed Data: Locations
+INSERT INTO locations (building_name, floor, area, description) VALUES 
+('Academic Building 1', 'Ground Floor', 'Main Lobby', 'Near main entrance'),
+('Academic Building 1', '3rd Floor', 'CSE Lab Area', 'Computer lab zone'),
+('Administrative Building', '2nd Floor', 'Registrar Office', 'Admin block'),
+('Permanent Campus', '1st Floor', 'Cafeteria Area', 'Student lounge');

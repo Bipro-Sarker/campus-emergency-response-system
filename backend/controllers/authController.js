@@ -17,19 +17,26 @@ exports.register = async (req, res) => {
             return res.status(400).json({ message: 'User with this email or student ID already exists!' });
         }
 
-        // ২. পাসওয়ার্ড সিকিউর (Hash) করা
+        // ২. পাসওয়ার্ড সিকিউর (Hash) করা
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(password, salt);
 
-        // ৩. ডাটাবেসে ইউজার সেভ করা
-        const userRole = role ? role : 'student'; 
+        // ৩. রোল নির্ধারণ করা (এখানে bipro@gmail.com দিলে অটোমেটিক অ্যাডমিন হয়ে যাবে)
+        let userRole = 'student';
         
+        if (email === 'bipro@gmail.com') { 
+            userRole = 'admin';
+        } else if (role && role === 'admin') {
+            userRole = 'admin';
+        }
+
+        // ৪. ডাটাবেসে ইউজার সেভ করা
         await db.execute(
             'INSERT INTO users (full_name, student_id, email, phone, password, role) VALUES (?, ?, ?, ?, ?, ?)',
             [full_name, student_id, email, phone, hashedPassword, userRole]
         );
 
-        res.status(201).json({ message: 'User registered successfully!' });
+        res.status(201).json({ message: `User registered successfully as ${userRole}!` });
 
     } catch (error) {
         console.error(error);
@@ -51,7 +58,7 @@ exports.login = async (req, res) => {
 
         const user = users[0];
 
-        // ২. পাসওয়ার্ড সঠিক কিনা তা চেক করা
+        // ২. পাসওয়ার্ড সঠিক কিনা তা চেক করা
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) {
             return res.status(401).json({ message: 'Invalid credentials!' });

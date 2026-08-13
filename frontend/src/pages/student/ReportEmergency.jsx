@@ -15,16 +15,22 @@ const ReportEmergency = () => {
     const [error, setError] = useState('');
     const navigate = useNavigate();
 
-    // পেজ লোড হওয়ার সময় ডাটাবেস থেকে Emergency Types এবং Locations নিয়ে আসা
+    // পেজ লোড হওয়ার সময় ডাটাবেস থেকে Emergency Types এবং Locations নিয়ে আসা
     useEffect(() => {
         const fetchData = async () => {
             try {
                 const typeRes = await api.get('/emergency-types');
                 const locRes = await api.get('/locations');
+                
+                // ডাটাবেস থেকে কী ডাটা আসছে বা কোনো এরর হচ্ছে কি না তা কনসোলে দেখার জন্য লগ
+                console.log("Emergency Types Response:", typeRes.data);
+                console.log("Locations Response:", locRes.data);
+
                 setEmergencyTypes(typeRes.data);
                 setLocations(locRes.data);
             } catch (err) {
-                console.error("Error fetching data:", err);
+                // আসল এররটি কনসোলে দেখানোর জন্য
+                console.error("Error fetching data:", err.response?.data || err.message);
             }
         };
         fetchData();
